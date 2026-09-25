@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import riftappstudios.finance.budgetbalancer.data.objects.Budgeting
-import riftappstudios.finance.budgetbalancer.data.objects.Categories
 import riftappstudios.finance.budgetbalancer.data.objects.Transactions
 
 class BudgetViewModel(
@@ -18,19 +17,16 @@ class BudgetViewModel(
     // Read-only public state exposed to the UI
     private val _transactionsState = MutableStateFlow(Transactions(emptyList()))
     val transactionsState: StateFlow<Transactions> = _transactionsState.asStateFlow()
-    private val _categoriesState = MutableStateFlow(Categories(emptyList()))
-    val categoriesState: StateFlow<Categories> = _categoriesState.asStateFlow()
 
     private val _budgets = MutableStateFlow(Budgeting(emptyList()))
     val budgets: StateFlow<Budgeting> = _budgets.asStateFlow()
     val budgetTotal: Int
-        get() = budgets.value.rows.filter { it.budget != "Income" }.sumOf { budget -> budget.target }
+        get() = budgets.value.rows.filter { it.name != "Income" }.sumOf { budget -> budget.target }
 
 
-    init {
+    fun begin() {
         viewModelScope.launch {
             _transactionsState.update { transactionsRepository.transactions() ?: Transactions(emptyList())}
-            _categoriesState.update { transactionsRepository.categories() ?: Categories(emptyList())}
             _budgets.update { transactionsRepository.budgets() ?: Budgeting(emptyList()) }
         }
     }

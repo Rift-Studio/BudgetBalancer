@@ -12,11 +12,12 @@ import kotlinx.serialization.encoding.Encoder
 
 // 1. Define the MM/dd/yyyy blueprint
 val customDateFormat = LocalDate.Format {
-    monthNumber()   // MM
-    char('/')
-    dayOfMonth()   // dd
-    char('/')
     year()          // yyyy
+    char('-')
+    monthNumber()   // MM
+    char('-')
+    dayOfMonth()   // dd
+
 }
 
 fun String.toDate(): LocalDate {

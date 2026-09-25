@@ -11,7 +11,11 @@ import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
 import riftappstudios.finance.budgetbalancer.data.TransactionsRepository
+import riftappstudios.finance.budgetbalancer.data.UserRepository
+import riftappstudios.finance.budgetbalancer.data.UserViewModel
+import riftappstudios.finance.budgetbalancer.data.objects.UserSingle
 import riftappstudios.finance.budgetbalancer.network.BudgetService
+import riftappstudios.finance.budgetbalancer.network.UserService
 
 // This will be implemented by each platform
 expect fun getPlatformEngine(): HttpClientEngine
@@ -25,14 +29,20 @@ val appModule = module {
             }
     }
 
+    // Global
+    singleOf(::UserSingle)
+
     // Provide Service
     singleOf(::BudgetService)
+    singleOf(::UserService)
 
     // Provide Repository
     singleOf(::TransactionsRepository)
+    singleOf(::UserRepository)
 
     // Provide ViewModel
     viewModelOf(::BudgetViewModel)
+    viewModelOf(::UserViewModel)
 }
 
 fun initKoin(config: KoinAppDeclaration? = null) {

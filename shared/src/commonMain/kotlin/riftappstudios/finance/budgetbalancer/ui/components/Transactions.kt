@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import riftappstudios.finance.budgetbalancer.data.objects.Categories
 import riftappstudios.finance.budgetbalancer.data.objects.Transaction
 import riftappstudios.finance.budgetbalancer.util.asString
 import kotlin.math.abs
@@ -26,7 +25,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun TransactionHistory(
     transactions: List<Transaction>,
-    categories: Categories,
+    categories: List<String>,
     modifier: Modifier = Modifier,
     updateCategory: (String, String) -> Unit
 ) {
@@ -111,7 +110,7 @@ fun Int.toFinance(): String {
 @Composable
 fun TransactionItem(
     transaction: Transaction,
-    categories: Categories,
+    categories: List<String>,
     modifier: Modifier = Modifier,
     updateCategory: (String, String) -> Unit
 ) {
@@ -207,7 +206,7 @@ fun TransactionItem(
                 modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                categories.rows.forEach {
+                categories.forEach {
 
                     Button(onClick = {
                         updateCategory(transaction.id,it)

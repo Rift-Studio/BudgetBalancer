@@ -2,17 +2,11 @@ package riftappstudios.finance.budgetbalancer.data.objects
 
 import kotlinx.serialization.Serializable
 
-typealias Budgets = MutableMap<String,Float>
-
 @Serializable
-data class Budgeting(
-    val rows: List<IndividualBudget>
-)
-
-@Serializable
-data class IndividualBudget(
+data class Account(
     val id: String,
     val name: String,
-    val target: Int,
+    val entity: String,
     val type: String,
+    val balance: Float,
 )

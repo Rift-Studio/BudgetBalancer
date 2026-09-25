@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
+import riftappstudios.finance.budgetbalancer.data.UserViewModel
+import riftappstudios.finance.budgetbalancer.ui.screen.AuthScreen
 import riftappstudios.finance.budgetbalancer.ui.screen.BudgetScreen
 import riftappstudios.finance.budgetbalancer.ui.screen.CalendarScreen
 
@@ -27,10 +29,14 @@ object BudgetScreen
 @Serializable
 object CalendarScreen
 
+@Serializable
+object AuthScreen
+
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     val viewModel: BudgetViewModel = koinViewModel()
+    val userViewModel: UserViewModel = koinViewModel()
 
 
     Row(modifier = Modifier.fillMaxSize()) {
@@ -40,16 +46,19 @@ fun AppNavigation() {
         NavHost(
             modifier = Modifier.weight(.9f),
             navController = navController,
-            startDestination = BudgetScreen
+            startDestination = AuthScreen
         ) {
             composable<HomeScreen> {
                 Text("HOME")
             }
             composable<BudgetScreen> { backStackEntry ->
-                BudgetScreen(navController, viewModel)
+                BudgetScreen(navController, viewModel, userViewModel)
             }
             composable<CalendarScreen> { backStackEntry ->
                 CalendarScreen(navController, viewModel)
+            }
+            composable<AuthScreen> { backStackEntry ->
+                AuthScreen(navController, userViewModel)
             }
         }
     }
@@ -66,6 +75,9 @@ fun NavigationRail(navController: NavController, modifier: Modifier) {
         }
         Button(onClick = { navController.navigate(CalendarScreen) }) {
             Text("Calendar")
+        }
+        Button(onClick = { navController.navigate(AuthScreen) }) {
+            Text("Auth")
         }
     }
 }

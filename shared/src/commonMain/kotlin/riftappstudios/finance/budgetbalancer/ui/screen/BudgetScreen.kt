@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import kotlinx.datetime.LocalDate
 import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
+import riftappstudios.finance.budgetbalancer.data.UserViewModel
 import riftappstudios.finance.budgetbalancer.data.objects.*
 import riftappstudios.finance.budgetbalancer.ui.components.ComposeTextFilterDropdown
 import riftappstudios.finance.budgetbalancer.ui.components.DateRangeInputField
@@ -18,13 +19,17 @@ import riftappstudios.finance.budgetbalancer.ui.components.Header
 import riftappstudios.finance.budgetbalancer.ui.components.TransactionHistory
 
 @Composable
-internal fun BudgetScreen(navController: NavController, viewModel: BudgetViewModel) {
-    // ViewModel
+internal fun BudgetScreen(
+    navController: NavController,
+    viewModel: BudgetViewModel,
+    userViewModel: UserViewModel) {
+    // User
+    val user: User? by remember { mutableStateOf(userViewModel.userSingle.user) }
 
     // Transactions
     val transactions: State<Transactions> = viewModel.transactionsState.collectAsState()
-    val categories: State<Categories> = viewModel.categoriesState.collectAsState()
     val budgeting: State<Budgeting> = viewModel.budgets.collectAsState()
+    val categories: List<String> = budgeting.value.rows.map { it.name }.sorted()
     // Date
     var startRange by remember { mutableStateOf(LocalDate(2026, 8, 1)) }
     var endRange by remember { mutableStateOf<LocalDate>(LocalDate(2026,8,30)) }
@@ -100,7 +105,7 @@ internal fun BudgetScreen(navController: NavController, viewModel: BudgetViewMod
                     Text("Refresh")
                 }
                 ComposeTextFilterDropdown(
-                    options = categories.value.rows.sorted(),
+                    options = categories,
                     label = "Category"
                 ) { option ->
                     categoryFilter = option
@@ -126,11 +131,14 @@ internal fun BudgetScreen(navController: NavController, viewModel: BudgetViewMod
                     dateRange = startRange to endRange
                 }
             }
-            TransactionHistory(processedTransactions, categories.value) { id, category ->
+            TransactionHistory(processedTransactions, categories) { id, category ->
                 viewModel.updateTransactionCategory(
                     id, category
                 )
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.begin()
     }
 }

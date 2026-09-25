@@ -43,18 +43,16 @@ fun Header(
     // budgets = actual value
     var over = 0f
     var under = 0f
-        budgeting.rows.filter { it.budget != "Contracts"
-                && it.budget != "Bills"
-                && it.budget != "Subscriptions"}.forEach { budget ->
-                    println("JORDAN - Budget: ${budget.budget}")
-            budgets[budget.budget]?.let {
-
-                    if (it < budget.target) {
-                        under += (budget.target - it)
-                    } else if (it > budget.target) {
-                        over += (it - budget.target)
-                    }
-
+    budgeting.rows.filter {
+        it.name != "Contracts"
+        && it.name != "Bills"
+        && it.name != "Subscriptions"}.forEach { budget ->
+            budgets[budget.name]?.let {
+                if (it < budget.target) {
+                    under += (budget.target - it)
+                } else if (it > budget.target) {
+                    over += (it - budget.target)
+                }
             }
         }
     val overUnder: Pair<Float,Float> = over to under
@@ -72,7 +70,7 @@ fun Header(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append(action.value.toFinance())
                         append("/")
-                        append(budgeting.rows.find { it.budget == action.key }?.target?.toFinance())
+                        append(budgeting.rows.find { it.name == action.key }?.target?.toFinance())
                     }
                 }
 
@@ -100,7 +98,7 @@ fun Header(
             Column(modifier = modifier.weight(.33f)) {
                 Text(budgets["Income"]?.toFinance() ?: "$0.00")
                 Text("-----")
-                Text(budgeting.rows.find { it.budget == "Income" }?.target?.toFinance() ?: "$0.00", style = MaterialTheme.typography.bodyLargeEmphasized)
+                Text(budgeting.rows.find { it.name == "Income" }?.target?.toFinance() ?: "$0.00", style = MaterialTheme.typography.bodyLargeEmphasized)
             }
         }
     }
