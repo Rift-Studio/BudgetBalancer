@@ -18,7 +18,11 @@ class BudgetService(
     override suspend fun refresh(): StateResponse<Boolean> {
         return try {
             // Make a GET request
-            val response: HttpResponse = client.get("http://localhost:5000/append-new-transactions")
+            val response: HttpResponse = client.post("http://localhost:5000/submit-txns") {
+                setBody(FormDataContent(Parameters.build {
+                    append("user_id", userSingle.user?.userId ?: "")
+                }))
+            }
 //            println("Status: ${response.status} - $data")
             StateResponse.Success(true)
         } catch (e: Exception) {

@@ -21,7 +21,7 @@ class BudgetViewModel(
     private val _budgets = MutableStateFlow(Budgeting(emptyList()))
     val budgets: StateFlow<Budgeting> = _budgets.asStateFlow()
     val budgetTotal: Int
-        get() = budgets.value.rows.filter { it.name != "Income" }.sumOf { budget -> budget.target }
+        get() = budgets.value.rows.filter { it.name != "Paycheck" }.sumOf { budget -> budget.target }
 
 
     fun begin() {

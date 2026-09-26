@@ -3,7 +3,6 @@ package riftappstudios.finance.budgetbalancer.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -21,7 +20,6 @@ fun DateRangeInputField(
     endDate: LocalDate?,
     onStartDateChanged: (LocalDate) -> Unit,
     onEndDateChanged: (LocalDate) -> Unit,
-    onSubmit: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(1f),
@@ -42,9 +40,6 @@ fun DateRangeInputField(
             onDateChanged = onEndDateChanged,
             modifier = Modifier.weight(1f)
         )
-        Button(onClick = onSubmit) {
-            Text("Dates \\/")
-        }
     }
 }
 

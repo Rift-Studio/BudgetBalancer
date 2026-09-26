@@ -3,7 +3,6 @@ package riftappstudios.finance.budgetbalancer.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +18,7 @@ import riftappstudios.finance.budgetbalancer.data.objects.Budgets
 
 fun isBudget(budget: String):Boolean {
     return when (budget) {
-        "Income","Transfer","CC Payment", "CC Settlement" -> false
+        "Income","Transfer","CC Payment", "CC Settlement", "Paycheck" -> false
         else -> true
     }
 }
@@ -59,7 +58,7 @@ fun Header(
 
 
     Row(modifier = modifier.fillMaxWidth()) {
-        FlowRow(modifier = modifier.weight(.9f)) {
+        FlowRow(modifier = modifier.weight(.8f)) {
             budgets.forEach { action ->
                 val budgetName = action.key
 
@@ -84,22 +83,13 @@ fun Header(
                 )
             }
         }
-        Row(modifier = modifier.weight(.1f), horizontalArrangement = Arrangement.SpaceBetween) {
-            Column(modifier = modifier.weight(.33f)) {
-                Text(overUnder.first.toFinance())
-                Text("-----")
-                Text(overUnder.second.toFinance(), style = MaterialTheme.typography.bodyLargeEmphasized)
-            }
-            Column(modifier = modifier.weight(.33f)) {
-                Text(budgetUsed.toFinance())
-                Text("-----")
-                Text(budgetTotal.toFinance(), style = MaterialTheme.typography.bodyLargeEmphasized)
-            }
-            Column(modifier = modifier.weight(.33f)) {
-                Text(budgets["Income"]?.toFinance() ?: "$0.00")
-                Text("-----")
-                Text(budgeting.rows.find { it.name == "Income" }?.target?.toFinance() ?: "$0.00", style = MaterialTheme.typography.bodyLargeEmphasized)
-            }
+        Row(modifier = modifier.weight(.2f), horizontalArrangement = Arrangement.SpaceBetween) {
+            AnalyticsList(
+                listOf(
+                    AnalyticsItem("Spread", overUnder.first, overUnder.second),
+                    AnalyticsItem("Budget", budgetUsed, budgetTotal.toFloat()),
+                    AnalyticsItem("Income", budgets["Paycheck"] ?: 0.00f, budgeting.rows.find { it.name == "Paycheck" }?.target?.toFloat() ?: 0.00f)
+                ))
         }
     }
 }

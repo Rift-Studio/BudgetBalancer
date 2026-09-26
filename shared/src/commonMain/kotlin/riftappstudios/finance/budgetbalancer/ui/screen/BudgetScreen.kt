@@ -2,21 +2,19 @@ package riftappstudios.finance.budgetbalancer.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
 import riftappstudios.finance.budgetbalancer.data.UserViewModel
 import riftappstudios.finance.budgetbalancer.data.objects.*
-import riftappstudios.finance.budgetbalancer.ui.components.ComposeTextFilterDropdown
-import riftappstudios.finance.budgetbalancer.ui.components.DateRangeInputField
-import riftappstudios.finance.budgetbalancer.ui.components.Header
-import riftappstudios.finance.budgetbalancer.ui.components.TransactionHistory
+import riftappstudios.finance.budgetbalancer.ui.components.*
 
 @Composable
 internal fun BudgetScreen(
@@ -31,8 +29,16 @@ internal fun BudgetScreen(
     val budgeting: State<Budgeting> = viewModel.budgets.collectAsState()
     val categories: List<String> = budgeting.value.rows.map { it.name }.sorted()
     // Date
-    var startRange by remember { mutableStateOf(LocalDate(2026, 8, 1)) }
-    var endRange by remember { mutableStateOf<LocalDate>(LocalDate(2026,8,30)) }
+    // 1. Get today's local date based on the system's default time zone
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    // 2. Generate the first day of the current month
+    val firstDayOfMonth = LocalDate(today.year,today.month,1)
+
+    // 3. Initialize your state properties
+    var startRange by remember { mutableStateOf(firstDayOfMonth) }
+    var endRange by remember { mutableStateOf(today) }
+
     // Category
     var dateRange: Pair<LocalDate, LocalDate> by remember { mutableStateOf(startRange to endRange) }
     var categoryFilter by remember {mutableStateOf<String?>(null)}
@@ -97,40 +103,43 @@ internal fun BudgetScreen(
         ) {
 
             Header(budgets = budgets, budgeting = budgeting.value, budgetTotal = budgetTotal)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            DynamicRowWithActions(
+                actions = listOf(
+                    RowAction(null, "Refresh") {viewModel.refresh()},
+                    RowAction(null, "Dates") {dateRange = startRange to endRange}
+                ),
             ) {
-                Button(onClick = {viewModel.refresh()}) {
-                    Text("Refresh")
-                }
-                ComposeTextFilterDropdown(
-                    options = categories,
-                    label = "Category"
-                ) { option ->
-                    categoryFilter = option
-                }
-                ComposeTextFilterDropdown(
-                    options = originalCategories.value.sorted(),
-                    label = "Original"
-                ) { option ->
-                    originalCategoryFilter = option
-                }
-                ComposeTextFilterDropdown(
-                    options = vendors.value.sorted(),
-                    label = "Vendor"
-                ) { option ->
-                    vendorFilter = option
-                }
-                DateRangeInputField(
-                    startDate = startRange,
-                    endDate = endRange,
-                    onStartDateChanged = { startRange = it },
-                    onEndDateChanged = { endRange = it }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    dateRange = startRange to endRange
+                    ComposeTextFilterDropdown(
+                        options = categories,
+                        label = "Category"
+                    ) { option ->
+                        categoryFilter = option
+                    }
+                    ComposeTextFilterDropdown(
+                        options = originalCategories.value.sorted(),
+                        label = "Original"
+                    ) { option ->
+                        originalCategoryFilter = option
+                    }
+                    ComposeTextFilterDropdown(
+                        options = vendors.value.sorted(),
+                        label = "Vendor"
+                    ) { option ->
+                        vendorFilter = option
+                    }
+                    DateRangeInputField(
+                        startDate = startRange,
+                        endDate = endRange,
+                        onStartDateChanged = { startRange = it },
+                        onEndDateChanged = { endRange = it }
+                    )
                 }
             }
+
             TransactionHistory(processedTransactions, categories) { id, category ->
                 viewModel.updateTransactionCategory(
                     id, category
