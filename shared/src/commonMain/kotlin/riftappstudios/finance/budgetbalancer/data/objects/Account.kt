@@ -10,3 +10,8 @@ data class Account(
     val type: String,
     val balance: Float,
 )
+
+@Serializable
+data class Accounts(
+    val accounts: List<Account>,
+)

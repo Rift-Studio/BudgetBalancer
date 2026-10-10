@@ -15,6 +15,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import riftappstudios.finance.budgetbalancer.data.objects.Budgeting
 import riftappstudios.finance.budgetbalancer.data.objects.Budgets
+import riftappstudios.finance.budgetbalancer.util.toFinance
 
 fun isBudget(budget: String):Boolean {
     return when (budget) {
@@ -38,14 +39,17 @@ fun Header(
         return@let total
     }
 
-    // budgeting = target value
-    // budgets = actual value
+    // budgeting = target valueByAccType
+    // budgets = actual valueByAccType
     var over = 0f
     var under = 0f
     budgeting.rows.filter {
         it.name != "Contracts"
-        && it.name != "Bills"
-        && it.name != "Subscriptions"}.forEach { budget ->
+                && it.name != "Bills"
+                && it.name != "Subscriptions"
+                && it.name != "Paycheck"
+                && it.name != "Transfer"
+    }.forEach { budget ->
             budgets[budget.name]?.let {
                 if (it < budget.target) {
                     under += (budget.target - it)

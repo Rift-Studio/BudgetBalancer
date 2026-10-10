@@ -15,6 +15,7 @@ import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
 import riftappstudios.finance.budgetbalancer.data.UserViewModel
 import riftappstudios.finance.budgetbalancer.data.objects.*
 import riftappstudios.finance.budgetbalancer.ui.components.*
+import riftappstudios.finance.budgetbalancer.util.budgetValue
 
 @Composable
 internal fun BudgetScreen(
@@ -27,6 +28,8 @@ internal fun BudgetScreen(
     // Transactions
     val transactions: State<Transactions> = viewModel.transactionsState.collectAsState()
     val budgeting: State<Budgeting> = viewModel.budgets.collectAsState()
+    val accounts: State<Accounts> = viewModel.accountsState.collectAsState()
+
     val categories: List<String> = budgeting.value.rows.map { it.name }.sorted()
     // Date
     // 1. Get today's local date based on the system's default time zone
@@ -72,22 +75,7 @@ internal fun BudgetScreen(
     processedTransactions.forEach { txn ->
         val current = budgets[txn.category]
         // Credit - is good + bad
-        budgets[txn.category] =
-            (current ?: 0f) + when (txn.type) {
-                "Debit" -> {
-                    txn.amount
-                }
-
-                "Credit" -> {
-                    txn.amount.times(-1f)
-                }
-
-                else -> {
-                    777f
-                }
-            }
-        // Debit - is bad _ good
-
+        budgets[txn.category] = (current ?: 0f) + txn.budgetValue()
     }
 
     Column(

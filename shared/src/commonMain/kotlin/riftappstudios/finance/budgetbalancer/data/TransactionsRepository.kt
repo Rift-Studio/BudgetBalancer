@@ -1,5 +1,6 @@
 package riftappstudios.finance.budgetbalancer.data
 
+import riftappstudios.finance.budgetbalancer.data.objects.Accounts
 import riftappstudios.finance.budgetbalancer.data.objects.Budgeting
 import riftappstudios.finance.budgetbalancer.data.objects.Transactions
 import riftappstudios.finance.budgetbalancer.network.BudgetService
@@ -31,6 +32,13 @@ class TransactionsRepository(
         return when (val state = budgetService.getTransactions()) {
                 is StateResponse.Success -> state.data
                 is StateResponse.Error -> null
-            }
         }
+    }
+
+    suspend fun accounts(): Accounts? {
+        return when (val state = budgetService.getAccounts()) {
+            is StateResponse.Success -> state.data
+            is StateResponse.Error -> null
+        }
+    }
 }

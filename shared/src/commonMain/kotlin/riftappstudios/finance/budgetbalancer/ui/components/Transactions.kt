@@ -19,8 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import riftappstudios.finance.budgetbalancer.data.objects.Transaction
 import riftappstudios.finance.budgetbalancer.util.asString
+import riftappstudios.finance.budgetbalancer.util.getColor
+import riftappstudios.finance.budgetbalancer.util.toFinance
 import kotlin.math.abs
-import kotlin.math.absoluteValue
 
 @Composable
 fun TransactionHistory(
@@ -56,54 +57,6 @@ fun TransactionHistory(
             }
         }
     }
-}
-
-fun String.toFinance(): Finance {
-    return if (lowercase().startsWith("credit")) {
-        Finance.Credit
-    } else if (lowercase().startsWith("debit")) {
-        Finance.Debit
-    } else {
-        Finance.Error
-    }
-}
-sealed class Finance {
-    object Debit: Finance()
-    object Credit: Finance()
-    object Error: Finance()
-}
-
-fun getColor(accountName: String, transactionType: String, amount: Float): Color {
-    return when (transactionType) {
-
-        "Debit" -> Color(0xFFC62828) // Red for expense
-        "Credit" -> Color(0xFF2E7D32) // Green for income
-
-//        "Debit" -> if (amount < 0f)
-//            Color(0xFFC62828) // Red for expense
-//        else
-//            Color(0xFF2E7D32) // Green for income
-//
-//        "Credit" -> if (amount <= 0f)
-//            Color(0xFF2E7D32) // Green for income
-//        else
-//            Color(0xFFC62828) // Red for expense
-        else -> Color.Gray
-    }
-}
-
-fun Float.toFinance(): String {
-    return if (this < 0f)
-        "-$${String.format("%.2f", absoluteValue)}"
-    else
-        "$${String.format("%.2f", absoluteValue)}"
-}
-
-fun Int.toFinance(): String {
-    return if (this < 0f)
-        "-$${this*-1}"
-    else
-        "$${this}"
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

@@ -21,6 +21,8 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import riftappstudios.finance.budgetbalancer.data.objects.Transaction
 import riftappstudios.finance.budgetbalancer.data.objects.Transactions
+import riftappstudios.finance.budgetbalancer.util.getColor
+import riftappstudios.finance.budgetbalancer.util.toFinance
 import kotlin.math.roundToInt
 
 fun Transactions.toDateMap() : MutableMap<LocalDate, Transactions?> {

@@ -37,7 +37,7 @@ fun ComposeTextFilterDropdown(
         onExpandedChange = { expanded = it },
         modifier = modifier.padding(horizontal = 8.dp)
     ) {
-        // Editable input field acting as a search bar and value display
+        // Editable input field acting as a search bar and valueByAccType display
         OutlinedTextField(
             value = searchQuery,
             onValueChange = {

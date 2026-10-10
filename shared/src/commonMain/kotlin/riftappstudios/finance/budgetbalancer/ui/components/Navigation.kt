@@ -17,6 +17,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import riftappstudios.finance.budgetbalancer.data.BudgetViewModel
 import riftappstudios.finance.budgetbalancer.data.UserViewModel
 import riftappstudios.finance.budgetbalancer.ui.screen.AuthScreen
+import riftappstudios.finance.budgetbalancer.ui.screen.BalanceScreen
 import riftappstudios.finance.budgetbalancer.ui.screen.BudgetScreen
 import riftappstudios.finance.budgetbalancer.ui.screen.CalendarScreen
 
@@ -29,6 +30,8 @@ object BudgetScreen
 @Serializable
 object CalendarScreen
 
+@Serializable
+object BalanceScreen
 @Serializable
 object AuthScreen
 
@@ -60,6 +63,9 @@ fun AppNavigation() {
             composable<AuthScreen> { backStackEntry ->
                 AuthScreen(navController, userViewModel)
             }
+            composable<BalanceScreen> { backStackEntry ->
+                BalanceScreen(navController,viewModel)
+            }
         }
     }
 }
@@ -75,6 +81,9 @@ fun NavigationRail(navController: NavController, modifier: Modifier) {
         }
         Button(onClick = { navController.navigate(CalendarScreen) }) {
             Text("Calendar")
+        }
+        Button(onClick = { navController.navigate(BalanceScreen) }) {
+            Text("Balance")
         }
         Button(onClick = { navController.navigate(AuthScreen) }) {
             Text("Auth")

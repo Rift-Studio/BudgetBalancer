@@ -6,6 +6,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
+import riftappstudios.finance.budgetbalancer.data.objects.Accounts
 import riftappstudios.finance.budgetbalancer.data.objects.Budgeting
 import riftappstudios.finance.budgetbalancer.data.objects.Transactions
 import riftappstudios.finance.budgetbalancer.data.objects.UserSingle
@@ -93,11 +94,33 @@ class BudgetService(
 //            client.close()
         }
     }
+
+    override suspend fun getAccounts() : StateResponse<Accounts?> {
+        return try {
+            // Make a GET request
+            val response: HttpResponse = client.post("http://localhost:5000/get-accounts") {
+                setBody(FormDataContent(Parameters.build {
+                    append("user_id", userSingle.user?.userId ?: "")
+                }))
+            }
+            val data = Json.decodeFromString(Accounts.serializer(), response.bodyAsText())
+//            println("Status: ${response.status} - $data")
+            StateResponse.Success(data)
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            StateResponse.Error(e)
+        } finally {
+            // Always close the client to release system resources
+//            client.close()
+        }
+    }
 }
 
 interface IBudgetService {
     suspend fun refresh(): StateResponse<Boolean>
     suspend fun getBudgets(): StateResponse<Budgeting?>
     suspend fun getTransactions() : StateResponse<Transactions?>
+
+    suspend fun getAccounts(): StateResponse<Accounts?>
     suspend fun changeCategory(id:String,category:String)
 }
